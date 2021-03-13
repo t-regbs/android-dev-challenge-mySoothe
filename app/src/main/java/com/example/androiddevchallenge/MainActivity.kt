@@ -16,39 +16,64 @@
 package com.example.androiddevchallenge
 
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.ui.HomeScreen
+import com.example.androiddevchallenge.ui.Login
+import com.example.androiddevchallenge.ui.Welcome
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.makeTransparentStatusBar()
         setContent {
             MyTheme {
+                window.statusBarColor = MaterialTheme.colors.background.toArgb()
                 MyApp()
             }
         }
     }
 }
 
-// Start building your app here!
 @Composable
 fun MyApp() {
+    val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        NavHost(navController = navController, startDestination = "welcome") {
+            composable("welcome") { Welcome(navController = navController) }
+            composable("login") { Login(navController = navController) }
+            composable("home_screen") { HomeScreen(navController = navController) }
+        }
     }
+}
+
+fun Window.makeTransparentStatusBar() {
+    setFlags(
+        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+    )
+    setFlags(
+        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+    )
 }
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
 @Composable
 fun LightPreview() {
     MyTheme {
-        MyApp()
+        HomeScreen(rememberNavController())
     }
 }
 
@@ -56,6 +81,6 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MyApp()
+        HomeScreen(rememberNavController())
     }
 }
